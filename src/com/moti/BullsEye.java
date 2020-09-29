@@ -3,11 +3,10 @@ package com.moti;
 import java.util.Random;
 
 public class BullsEye {
+    private static final int NUMBER_LENGTH = 4;
     private final String _number;
     private boolean _is_bullseye;
     private int _attempts;
-    private static final int INDEX_NOT_FOUND = -1;
-    private static final int NUMBER_LENGTH = 4;
 
     public BullsEye() {
         _number = _generate_random_number();
@@ -34,30 +33,46 @@ public class BullsEye {
         return number;
     }
 
-    public String get_user_output(String guess) {
-        ++_attempts;
-
+    public int get_hits_count(String guess) {
         int hits_count = 0;
+
+        for (int i = 0; i < guess.length(); ++i) {
+            // Check the digits at the i position are the same
+            if (_number.charAt(i) == guess.charAt(i)) {
+                ++hits_count;
+            }
+        }
+
+        return hits_count;
+    }
+
+    public int get_misses_count(String guess) {
         int misses_count = 0;
 
         for (int i = 0; i < guess.length(); ++i) {
-            if (_number.charAt(i) == guess.charAt(i)) {
-                ++hits_count;
-            } else if (INDEX_NOT_FOUND != _number.indexOf(guess.charAt(i))) {
+            // Check the current guess digit appears at the number in different index
+            if (_number.charAt(i) != guess.charAt(i) &&
+                    0 <= _number.indexOf(guess.charAt(i))) {
                 ++misses_count;
             }
         }
 
-        _is_bullseye = NUMBER_LENGTH == hits_count;
-
-        return String.format("Hits count: %d, Misses count: %d", hits_count, misses_count);
+        return misses_count;
     }
 
     public boolean is_bullseye(String guess) {
         return _is_bullseye;
     }
 
+    public void set_is_bullseye(boolean is_bullseye) {
+        _is_bullseye = is_bullseye;
+    }
+
     public int get_attempts_count() {
         return _attempts;
+    }
+
+    public void increase_attempts_count() {
+        ++_attempts;
     }
 }

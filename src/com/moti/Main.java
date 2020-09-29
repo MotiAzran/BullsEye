@@ -1,5 +1,6 @@
 package com.moti;
 
+import java.sql.Struct;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -9,7 +10,7 @@ public class Main {
         while (true) {
             play();
 
-            // Ask user or another round
+            // Ask the user for another round
             System.out.print("Another round? ");
             Scanner stdin = new Scanner(System.in);
             String input = stdin.nextLine();
@@ -32,11 +33,19 @@ public class Main {
             // Get user guess
             System.out.print("Enter your guess: ");
             guess = stdin.nextLine();
-            if (BullsEye.is_valid_guess(guess)) {
-                // Get user guess output
-                String user_answer = game.get_user_output(guess);
 
-                answers.add(String.format("%s - %s", guess, user_answer));
+            if (BullsEye.is_valid_guess(guess)) {
+                // Increase attempts count
+                game.increase_attempts_count();
+
+                // Get hits and misses count
+                int hits_count = game.get_hits_count(guess);
+                int misses_count = game.get_misses_count(guess);
+
+                // Check if the guess was bulls eye
+                game.set_is_bullseye(guess.length() == hits_count);
+
+                answers.add(String.format("%s - Hits count: %d, Misses count: %d", guess, hits_count, misses_count));
 
                 // Print all answers
                 for (String answer : answers) {
