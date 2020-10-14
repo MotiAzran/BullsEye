@@ -1,24 +1,59 @@
+/*
+ * Moti Azran
+ *
+ * The main game class
+ */
 package com.moti;
 
 import java.util.Random;
 
+/**
+ * The class represent the bulls eye game
+ * In this game the user try to guess what 4-digits number
+ * the program generated
+ *
+ * @author Moti Azran
+ */
 public class BullsEye {
+    /*
+     * The class generate 4-digits number and then
+     * waits for the user to enter guess and it send
+     * to the user the result of the guess, if the guess
+     * is correct than the class set the game as bulls eye
+     */
+
     private static final int NUMBER_LENGTH = 4;
     private final String _number;
-    private boolean _is_bullseye;
+    private boolean _isBullseye;
     private int _attempts;
 
+    /**
+     * The class constructor
+     * The method generate random 4-digits number
+     * and initializes all class members
+     */
     public BullsEye() {
-        _number = _generate_random_number();
+        _number = _generateRandomNumber();
         _attempts = 0;
-        _is_bullseye = false;
+        _isBullseye = false;
     }
 
-    public static boolean is_valid_guess(String guess) {
+    /**
+     * Checks if the guess is valid.
+     * Valid guess is an 4-digits string
+     * @param guess The user guess
+     * @return true if the guess valid, otherwise false
+     */
+    public static boolean isValidGuess(String guess) {
         return guess.length() == NUMBER_LENGTH && guess.chars().allMatch(Character::isDigit);
     }
 
-    private String _generate_random_number() {
+    /**
+     * Generates a random 4-digits number
+     *
+     * @return string that represents the generated number
+     */
+    private String _generateRandomNumber() {
         Random rand = new Random();
 
         String number = "";
@@ -33,46 +68,50 @@ public class BullsEye {
         return number;
     }
 
-    public int get_hits_count(String guess) {
-        int hits_count = 0;
+    /**
+     * Return's the guess result, how many hits and
+     * misses occurred
+     *
+     * @param guess The user guess
+     * @return The result of the guess
+     */
+    public BullsEyeResult getResult(String guess) {
+        int hitsCount = 0;
+        int missesCount = 0;
 
         for (int i = 0; i < guess.length(); ++i) {
-            // Check the digits at the i position are the same
             if (_number.charAt(i) == guess.charAt(i)) {
-                ++hits_count;
+                // The guess current digit and the number current digit are the same
+                ++hitsCount;
+            } else if (0 <= _number.indexOf(guess.charAt(i))) {
+                // The guess current digit found in the number
+                ++missesCount;
             }
         }
 
-        return hits_count;
+        _isBullseye = (guess.length() == hitsCount);
+
+        return new BullsEyeResult(guess, hitsCount, missesCount);
     }
 
-    public int get_misses_count(String guess) {
-        int misses_count = 0;
-
-        for (int i = 0; i < guess.length(); ++i) {
-            // Check the current guess digit appears at the number in different index
-            if (_number.charAt(i) != guess.charAt(i) &&
-                    0 <= _number.indexOf(guess.charAt(i))) {
-                ++misses_count;
-            }
-        }
-
-        return misses_count;
+    /**
+     * @return true if the last guess was bulls eye, otherwise false
+     */
+    public boolean isBullseye() {
+        return _isBullseye;
     }
 
-    public boolean is_bullseye(String guess) {
-        return _is_bullseye;
-    }
-
-    public void set_is_bullseye(boolean is_bullseye) {
-        _is_bullseye = is_bullseye;
-    }
-
-    public int get_attempts_count() {
+    /**
+     * @return number of attempts in the round
+     */
+    public int getAttemptsCount() {
         return _attempts;
     }
 
-    public void increase_attempts_count() {
+    /**
+     * Increases the attempts count
+     */
+    public void increaseAttemptsCount() {
         ++_attempts;
     }
 }

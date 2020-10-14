@@ -3,27 +3,44 @@ package com.moti;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * The main program class
+ * Implements the program entry point
+ */
 public class Main {
 
+    /**
+     * The program entry point. Start the game
+     * and after every round ask the user for another
+     * one until the user exit
+     * @param args command line arguments
+     */
     public static void main(String[] args) {
+        Scanner stdin = new Scanner(System.in);
+
         while (true) {
             play();
 
             // Ask the user for another round
             System.out.print("Another round? ");
-            Scanner stdin = new Scanner(System.in);
-            String input = stdin.nextLine();
 
+            String input = stdin.nextLine();
             if (!input.equalsIgnoreCase("yes")) {
                 // User want to exit
                 System.out.println("Good bye!");
-                break;
+                return;
             }
         }
     }
 
+    /**
+     * The class represent game round.
+     * Initialize bullseye object and ask
+     * the user for guesses, until the guess
+     * is right.
+     */
     public static void play() {
-        ArrayList<String> answers = new ArrayList<>();
+        ArrayList<BullsEyeResult> results = new ArrayList<>();
         Scanner stdin = new Scanner(System.in);
         BullsEye game = new BullsEye();
         String guess;
@@ -33,28 +50,24 @@ public class Main {
             System.out.print("Enter your guess: ");
             guess = stdin.nextLine();
 
-            if (BullsEye.is_valid_guess(guess)) {
+            if (BullsEye.isValidGuess(guess)) {
                 // Increase attempts count
-                game.increase_attempts_count();
+                game.increaseAttemptsCount();
 
-                // Get hits and misses count
-                int hits_count = game.get_hits_count(guess);
-                int misses_count = game.get_misses_count(guess);
+                // Get guess result
+                BullsEyeResult result = game.getResult(guess);
 
-                // Check if the guess was bulls eye
-                game.set_is_bullseye(guess.length() == hits_count);
-
-                answers.add(String.format("%s - Hits count: %d, Misses count: %d", guess, hits_count, misses_count));
+                results.add(result);
 
                 // Print all answers
-                for (String answer : answers) {
-                    System.out.println(answer);
+                for (BullsEyeResult res : results) {
+                    System.out.println(res);
                 }
             } else {
                 System.out.println("Error: Invalid guess");
             }
-        } while (!game.is_bullseye(guess));
+        } while (!game.isBullseye());
 
-        System.out.printf("Bull's eye! You succeeded in %d attempts\n", game.get_attempts_count());
+        System.out.printf("Bull's eye! You succeeded in %d attempts\n", game.getAttemptsCount());
     }
 }
