@@ -3,7 +3,6 @@
  *
  * Guess result
  */
-package com.moti;
 
 /**
  * The class represent the result

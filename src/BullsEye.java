@@ -3,7 +3,6 @@
  *
  * The main game class
  */
-package com.moti;
 
 import java.util.Random;
 
@@ -23,7 +22,7 @@ public class BullsEye {
      */
 
     private static final int NUMBER_LENGTH = 4;
-    private final String _number;
+    private String _number;
     private boolean _isBullseye;
     private int _attempts;
 
@@ -60,6 +59,10 @@ public class BullsEye {
         for (int i = 0; NUMBER_LENGTH > i; ++i) {
             // Generate random digit
             int num = rand.nextInt(10);
+
+            if (number.contains(Integer.toString(num))) {
+                continue;
+            }
 
             // Add digit to string number
             number = number.concat(Integer.toString(num));
@@ -113,5 +116,14 @@ public class BullsEye {
      */
     public void increaseAttemptsCount() {
         ++_attempts;
+    }
+
+    /**
+     * Reset all game stats
+     */
+    public void resetGame() {
+        _number = _generateRandomNumber();
+        _attempts = 0;
+        _isBullseye = false;
     }
 }

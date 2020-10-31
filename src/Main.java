@@ -1,13 +1,14 @@
-package com.moti;
-
+import javax.swing.*;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 /**
  * The main program class
  * Implements the program entry point
  */
 public class Main {
+
+    static private BullsEye game;
+    static private ArrayList<BullsEyeResult> results;
 
     /**
      * The program entry point. Start the game
@@ -16,20 +17,22 @@ public class Main {
      * @param args command line arguments
      */
     public static void main(String[] args) {
-        Scanner stdin = new Scanner(System.in);
+        game = new BullsEye();
+        results = new ArrayList<>();
 
         while (true) {
             play();
 
             // Ask the user for another round
-            System.out.print("Another round? ");
-
-            String input = stdin.nextLine();
-            if (!input.equalsIgnoreCase("yes")) {
+            int selectedOption = JOptionPane.showConfirmDialog(null, "Another round?",
+                    "", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (JOptionPane.OK_OPTION != selectedOption) {
                 // User want to exit
-                System.out.println("Good bye!");
                 return;
             }
+
+            game.resetGame();
+            results.clear();
         }
     }
 
@@ -40,15 +43,19 @@ public class Main {
      * is right.
      */
     public static void play() {
-        ArrayList<BullsEyeResult> results = new ArrayList<>();
-        Scanner stdin = new Scanner(System.in);
-        BullsEye game = new BullsEye();
         String guess;
 
         do {
+            String answers = "";
+            for (BullsEyeResult res : results) {
+                answers = answers.concat(res + "\n");
+            }
+
             // Get user guess
-            System.out.print("Enter your guess: ");
-            guess = stdin.nextLine();
+            guess = JOptionPane.showInputDialog(answers + "Enter guess:");
+            if (null == guess) {
+                System.exit(0);
+            }
 
             if (BullsEye.isValidGuess(guess)) {
                 // Increase attempts count
@@ -58,16 +65,12 @@ public class Main {
                 BullsEyeResult result = game.getResult(guess);
 
                 results.add(result);
-
-                // Print all answers
-                for (BullsEyeResult res : results) {
-                    System.out.println(res);
-                }
             } else {
-                System.out.println("Error: Invalid guess");
+                JOptionPane.showMessageDialog(null, "Error: Invalid guess");
             }
         } while (!game.isBullseye());
 
-        System.out.printf("Bull's eye! You succeeded in %d attempts\n", game.getAttemptsCount());
+        JOptionPane.showMessageDialog(null,
+                String.format("Bull's eye! You succeeded in %d attempts\n", game.getAttemptsCount()));
     }
 }
