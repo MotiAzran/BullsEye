@@ -4,20 +4,24 @@
  * The main game class
  */
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 /**
  * The class represent the bulls eye game
- * In this game the user try to guess what 4-digits number
- * the program generated
+ * In this game the user try to guess what
+ * is the 4-digits number the program generated.
+ *
+ * To start or reset a game, you must call startNewGame method.
  *
  * @author Moti Azran
  */
 public class BullsEye {
     /*
      * The class generate 4-digits number and then
-     * waits for the user to enter guess and it send
-     * to the user the result of the guess, if the guess
+     * waits for the user to enter guess then it send
+     * the user the result of the guess, if the guess
      * is correct than the class set the game as bulls eye
      */
 
@@ -27,11 +31,9 @@ public class BullsEye {
     private int _attempts;
 
     /**
-     * The class constructor
-     * The method generate random 4-digits number
-     * and initializes all class members
+     * Reset all game stats
      */
-    public BullsEye() {
+    public void startNewGame() {
         _number = _generateRandomNumber();
         _attempts = 0;
         _isBullseye = false;
@@ -43,7 +45,11 @@ public class BullsEye {
      * @param guess The user guess
      * @return true if the guess valid, otherwise false
      */
-    public static boolean isValidGuess(String guess) {
+    private boolean _isValidGuess(String guess) {
+        if (null == guess) {
+            return false;
+        }
+
         return guess.length() == NUMBER_LENGTH && guess.chars().allMatch(Character::isDigit);
     }
 
@@ -53,19 +59,20 @@ public class BullsEye {
      * @return string that represents the generated number
      */
     private String _generateRandomNumber() {
+        ArrayList<Character> digits = new ArrayList<>(Arrays.asList('0', '1', '2', '3', '4', '5', '6', '7', '8', '9'));
+
         Random rand = new Random();
 
         String number = "";
         for (int i = 0; NUMBER_LENGTH > i; ++i) {
             // Generate random digit
-            int num = rand.nextInt(10);
-
-            if (number.contains(Integer.toString(num))) {
-                continue;
-            }
+            int index = rand.nextInt(digits.size());
 
             // Add digit to string number
-            number = number.concat(Integer.toString(num));
+            number = number.concat(Character.toString(digits.get(index)));
+
+            // Remove the chosen digit to prevent digits duplication
+            digits.remove(index);
         }
 
         return number;
@@ -79,6 +86,10 @@ public class BullsEye {
      * @return The result of the guess
      */
     public BullsEyeResult getResult(String guess) {
+        if (!_isValidGuess(guess)) {
+            return null;
+        }
+
         int hitsCount = 0;
         int missesCount = 0;
 
@@ -116,14 +127,5 @@ public class BullsEye {
      */
     public void increaseAttemptsCount() {
         ++_attempts;
-    }
-
-    /**
-     * Reset all game stats
-     */
-    public void resetGame() {
-        _number = _generateRandomNumber();
-        _attempts = 0;
-        _isBullseye = false;
     }
 }

@@ -21,6 +21,9 @@ public class Main {
         results = new ArrayList<>();
 
         while (true) {
+            game.startNewGame();
+            results.clear();
+
             play();
 
             // Ask the user for another round
@@ -30,9 +33,6 @@ public class Main {
                 // User want to exit
                 return;
             }
-
-            game.resetGame();
-            results.clear();
         }
     }
 
@@ -52,21 +52,17 @@ public class Main {
             }
 
             // Get user guess
-            guess = JOptionPane.showInputDialog(answers + "Enter guess:");
+            guess = JOptionPane.showInputDialog(answers + "Enter guess (hit Cancel to exit):");
             if (null == guess) {
                 System.exit(0);
             }
 
-            if (BullsEye.isValidGuess(guess)) {
-                // Increase attempts count
-                game.increaseAttemptsCount();
-
-                // Get guess result
-                BullsEyeResult result = game.getResult(guess);
-
-                results.add(result);
-            } else {
+            BullsEyeResult result = game.getResult(guess);
+            if (null == result) {
                 JOptionPane.showMessageDialog(null, "Error: Invalid guess");
+            } else {
+                game.increaseAttemptsCount();
+                results.add(result);
             }
         } while (!game.isBullseye());
 
